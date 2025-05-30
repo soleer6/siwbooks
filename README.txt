@@ -1,68 +1,128 @@
-1--	Definición de la entidad (Book)
+# 📚 SiWBooks – Virtual Library System (Spring Boot + JWT + HTML/JS)
 
-Creamos una clase Java con campos id, title, author e isbn.
+**SiWBooks** is a complete web application for managing books and user reviews, built with **Spring Boot**, **JWT authentication**, and a static frontend in HTML/CSS/JavaScript. It implements role-based access control with separate functionality for users and administrators.
 
-Gracias a JPA, esa clase “se mapea” automáticamente a una tabla en PostgreSQL, donde cada libro es una fila.
+---
 
-2--	Capa de acceso a datos (BookRepository)
+## ✨ Main Features
 
-Hereda de una interfaz de Spring (JpaRepository).
+### 👤 Registered Users
+- Account registration with unique email and encrypted password (BCrypt)
+- Login and JWT token generation
+- Access to the list of books
+- Submit **one review per book**, including:
+  - Title
+  - Rating (1–5)
+  - Text content
+- Logout by clearing the JWT token from localStorage
 
-Nos da métodos listos para usar: save(), findAll(), findById(), delete(), etc., sin escribir SQL.
+### 🛠️ Admin Panel
+- Accessible via `/admin.html`
+- Full **CRUD** (Create, Read, Update, Delete) operations for books
+- View all user-submitted reviews
+- Delete reviews individually
 
-3--	Lógica de negocio (BookService + BookServiceImpl)
+---
 
-Definimos una interfaz con métodos como findAll(), findById(id), create(book), update(id, book) y delete(id).
+## 🔐 Security and Roles
 
-La implementación se encarga de:
+- **JWT-based authentication** (stored in `localStorage`)
+- **Role-based authorization** using `SecurityConfig.java`
+- Roles:
+  - `USER` → can read books and submit reviews
+  - `ADMIN` → can manage books and reviews
 
-- Verificar si un libro existe antes de actualizar o borrar.
-- Lanzar una excepción si no lo encuentra (para devolver un 404 al cliente).
+---
 
-4--	Controladores REST (BookController)
+## 🗂️ Project Structure
 
-Exponen rutas HTTP:
+src/
+├── main/
+│ ├── java/com/example/siwbooks/
+│ │ ├── controller/ # REST Controllers: Auth, Book, Review
+│ │ ├── model/ # Entities: Book, User, Review
+│ │ ├── repository/ # JPA Repositories
+│ │ ├── security/ # JwtUtil, JwtFilter
+│ │ ├── service/ # Business Logic & UserDetailsService
+│ │ ├── config/ # SecurityConfig + DataInitializer
+│ └── resources/
+│ ├── static/ # HTML, JS, CSS frontend
+│ ├── application.properties
 
-- GET /api/books → lista todos los libros.
-- GET /api/books/{id} → devuelve un solo libro.
-- POST /api/books → crea un nuevo libro.
-- PUT /api/books/{id} → actualiza un libro existente.
-- DELETE /api/books/{id} → borra un libro.
+yaml
+Copiar
+Editar
 
-Cada método recibe o devuelve objetos Java que Spring automáticamente traduce a JSON.
+---
 
-5--	Seguridad básica
+## 📦 Initial Test Data (via `DataInitializer.java`)
 
-Protegemos todas las rutas con Basic Auth (usuario+contraseña).
+The application initializes with:
 
-Configuramos credenciales fijas en application.properties o en SecurityConfig, para que no cambien al reiniciar.
+- **6 users**:
+  - 1 admin: `admin@example.com` / `admin`
+  - 5 users: `usuario1@example.com` → `usuario5@example.com` (all use `password`)
+- **25 sample books**
+- **5 reviews** (submitted by `usuario1` on the first 5 books)
 
-6--	Manejo de errores y validación
+---
 
-Si el cliente pide un libro que no existe, devolvemos un 404 Not Found con un mensaje claro.
+## 🧪 Tech Stack
 
-Si el cliente envía datos mal formados (p. ej. ISBN con formato incorrecto), devolvemos un 400 Bad Request con las razones de validación.
+- Java 17
+- Spring Boot 3.x
+- Spring Security + JWT
+- Hibernate (JPA)
+- PostgreSQL
+- Static HTML/CSS + Bootstrap
+- Vanilla JavaScript
 
-7--	Pruebas y puesta en marcha
+---
 
-Probamos manualmente con curl y Postman: listas, creación, lectura, actualización y borrado de libros.
+## ▶️ How to Run
 
-Verificamos que la base de datos (PostgreSQL) y la herramienta de cliente (DBeaver) estén sincronizadas.
+```bash
+# Clone this repo
+git clone https://github.com/yourusername/siwbooks.git
+cd siwbooks
 
-8--	Control de versiones
+# Start PostgreSQL and configure it in application.properties
 
-Inicializamos un repositorio git y subimos el proyecto a GitHub, para mantener el historial de cambios y facilitarnos el trabajo en equipo.
+# Run the application
+./mvnw spring-boot:run
+👥 Test Credentials
+Email	Role	Password
+admin@example.com	ADMIN	admin
+usuario1@example.com	USER	password
+usuario2@example.com	USER	password
+usuario3@example.com	USER	password
+usuario4@example.com	USER	password
+usuario5@example.com	USER	password
 
-9--	Paginación y filtros en GET /api/books
+📖 Use Cases Covered
+Use Case	Implemented
+User registration	✅ Yes
+Login and JWT token	✅ Yes
+Book listing (paginated)	✅ Yes
+Review creation (1/user/book)	✅ Yes
+Book CRUD (Admin only)	✅ Yes
+Admin review moderation	✅ Yes
+Static frontend (no templates)	✅ Yes
 
-- Parámetros opcionales:
-  • page (número de página, defecto 0)  
-  • size (tamaño de página, defecto 10)  
-  • title (filtra libros cuyo título contiene esta cadena, case-insensitive)  
-  • author (filtra libros cuyo autor contiene esta cadena, case-insensitive)  
+🎓 Academic Context
+This project was developed for the Information Systems on the Web exam at Università degli Studi Roma Tre, Master in Computer Engineering, Academic Year 2024/2025.
 
-10--	Registro e inicio de sesión de usuarios
+yaml
+Copiar
+Editar
 
-- POST /api/auth/register: crea una nueva cuenta con email y contraseña (encrypted).  
-- POST /api/auth/login: valida credenciales y devuelve un token JWT.
+---
+
+✅ You can now copy and paste this directly into your `README.md` on GitHub.
+
+If you'd like a version in **Italian** or to generate a `data.sql` alternative to `DataInitializer`, just let me know!
+
+
+
+
 
