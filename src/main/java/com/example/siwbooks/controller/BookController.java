@@ -4,10 +4,14 @@ import com.example.siwbooks.model.Book;
 import com.example.siwbooks.repository.BookRepository;
 import com.example.siwbooks.service.BookService;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/books")
@@ -22,10 +26,10 @@ public class BookController {
     }
 
     // GET /api/books
-    @GetMapping
+    /*    @GetMapping               ------> Comentada por el error “Ambiguous mapping” al implementar pageable
     public List<Book> getAll() {
         return repository.findAll();
-    }
+    } */
 
     // GET /api/books/{id}
     @GetMapping("/{id}")
@@ -55,4 +59,17 @@ public class BookController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping
+    public ResponseEntity<Page<Book>> getAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String author
+    )   {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> result = service.findPaginated(pageable, title, author);
+        return ResponseEntity.ok(result);
+    }
+
 }

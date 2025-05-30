@@ -1,0 +1,72 @@
+package com.example.siwbooks.controller;
+
+import com.example.siwbooks.model.User;
+import com.example.siwbooks.repository.UserRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * POST /api/auth/register
+     * Recibe un email + password, comprueba duplicados, cifra la clave y guarda el usuario.
+     */
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrationRequest request) {
+        // 1) Comprobar que no exista ya un usuario con ese email
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("El email ya está en uso");
+        }
+        // 2) Crear y cifrar contraseña
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        // 3) Guardar y devolver 201 Created
+        User saved = userRepository.save(user);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(saved);
+    }
+
+    /**
+     * DTO para la petición de registro.
+     */
+    public static class RegistrationRequest {
+        @NotBlank @Email
+        private String email;
+
+        @NotBlank
+        private String password;
+
+        public String getEmail() {
+            return email;
+        }
+        public void setEmail(String email) {
+            this.email = email;
+        }
+        public String getPassword() {
+            return password;
+        }
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+}

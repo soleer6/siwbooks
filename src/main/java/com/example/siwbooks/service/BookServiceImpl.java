@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -46,4 +50,18 @@ public class BookServiceImpl implements BookService {
         Book existente = findById(id);
         repository.delete(existente);
     }
+
+    @Override
+    public Page<Book> findPaginated(Pageable pageable, String title, String author) {
+        if (title != null && author != null) {
+            return repository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(title, author, pageable);
+        } else if (title != null) {
+            return repository.findByTitleContainingIgnoreCase(title, pageable);
+        } else if (author != null) {
+            return repository.findByAuthorContainingIgnoreCase(author, pageable);
+        } else {
+            return repository.findAll(pageable);
+        }
+    }
+
 }

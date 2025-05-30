@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Admin - Añadir Libro</title>
+  <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+  <h1>📚 Añadir / Editar libro</h1>
+
+  <form id="bookForm">
+    <input type="hidden" id="bookId">
+    <div class="mb-3">
+      <label for="title" class="form-label">Título</label>
+      <input type="text" class="form-control" id="title" required>
+    </div>
+    <div class="mb-3">
+      <label for="author" class="form-label">Autor</label>
+      <input type="text" class="form-control" id="author" required>
+    </div>
+    <div class="mb-3">
+      <label for="isbn" class="form-label">ISBN</label>
+      <input type="text" class="form-control" id="isbn" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar libro</button>
+    <button type="button" id="resetForm" class="btn btn-secondary ms-2">Limpiar</button>
+  </form>
+
+  <div id="response" class="mt-3"></div>
+
+  <h2 class="mt-5">📖 Libros existentes</h2>
+  <table class="table table-bordered">
+    <thead><tr><th>ID</th><th>Título</th><th>Autor</th><th>Acciones</th></tr></thead>
+    <tbody id="bookTableBody"></tbody>
+  </table>
+
+  <h2 class="mt-5">📝 Reseñas de usuarios</h2>
+  <div id="reviewContainer" class="mt-3"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
